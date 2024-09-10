@@ -111,8 +111,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'lugat',
         'USER': 'lugat',
-        'PASSWORD': 'lugat1234',
-        'HOST': '8080',
+        'PASSWORD': 'lugat12345',
+        'HOST': 'localhost',
         'PORT': '5432',
     }
 }
