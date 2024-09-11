@@ -109,9 +109,9 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'lugat',
-        'USER': 'lugat',
-        'PASSWORD': 'lugat12345',
+        'NAME': 'lugat_db',
+        'USER': 'lugat_user',
+        'PASSWORD': 'lugat_password',
         'HOST': 'localhost',
         'PORT': '5432',
     }
