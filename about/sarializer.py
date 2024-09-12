@@ -112,4 +112,5 @@ class TextSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Text
-        fields = ['id', 'text', 'provensiya' ]
+        fields = ['id', 'text', 'provensiya', 'lemmatized_text']
+

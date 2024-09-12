@@ -1,9 +1,12 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.views import APIView
+
 from .models import ScientificTeam, Scientists, Expressions, News, Provensiya, Dictionary, Contact, Slider, Text
 from .sarializer import ScientificTeamSerializer, ScientistsSerializer, ExpressionsSerializer, NewsSerializer, \
     ProvensiyaSerializer, DictionarySerializer, ContactSerializer, SliderSerializer, TextSerializer
+from .utils import search_texts
 
 
 @api_view(['GET'])
@@ -61,6 +64,7 @@ def provensiya_list(request):
     provensiyas = Provensiya.objects.all()
     serializer = ProvensiyaSerializer(provensiyas, many=True)
     return Response(serializer.data)
+
 
 @api_view(['GET'])
 def dictionary_list(request):
@@ -122,3 +126,16 @@ def text_list(request):
     text = Text.objects.all()
     serializer = TextSerializer(text, many=True)
     return Response(serializer.data)
+
+
+class SearchAPIView(APIView):
+    def get(self, request):
+        query = request.GET.get('q', '')
+        if not query:
+            return Response({'results': [], 'message': 'Qidiruv so\'zi kiritilmagan.'}, status=400)
+
+        results = search_texts(query)
+        if not results:
+            return Response({'results': [], 'message': 'Natijalar topilmadi.'}, status=200)
+
+        return Response({'results': results})

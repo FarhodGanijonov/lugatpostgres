@@ -31,8 +31,8 @@ class SentencesInline(admin.TabularInline):
 
 
 class TextAdmin(admin.ModelAdmin):
-    list_display = ('id', 'provensiya', 'text')  # Fields to display in the list view
-    search_fields = ['text']  # Fields to be searchable in the admin interface
+    list_display = ('id', 'provensiya', 'text', 'lemmatized_text')  # Fields to display in the list view
+    search_fields = ['text', 'lemmatized_text']  # Fields to be searchable in the admin interface
     list_filter = ('provensiya',)
 
     def get_search_results(self, request, queryset, search_term):
