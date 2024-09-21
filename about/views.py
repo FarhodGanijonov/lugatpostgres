@@ -11,9 +11,6 @@ from .sarializer import ScientificTeamSerializer, ScientistsSerializer, Expressi
     WordInputSerializer
 
 
-# from .utils import  LemmatizedSearchFilter
-
-
 @api_view(['GET'])
 def scientific_team_list(request):
     teams = ScientificTeam.objects.all()
@@ -129,7 +126,6 @@ def slider_list(request):
 class TextListView(ListAPIView):
     queryset = Text.objects.all()
     serializer_class = TextSerializer
-    # filter_backends = [LemmatizedSearchFilter]
 
 
 class WordRootAPIView(APIView):
