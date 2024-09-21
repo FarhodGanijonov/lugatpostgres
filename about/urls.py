@@ -3,7 +3,7 @@ from django.urls import path
 
 from .views import scientific_team_list, scientific_team_detail, scientists_list, expressions_list, news_list, \
     dictionary_list, provensiya_list, \
-    news_detail, contact_list_create, contact_detail, slider_list, TextListView, LemmatizeWordAPIView, WordRootAPIView
+    news_detail, contact_list_create, contact_detail, slider_list, TextListView, WordRootAPIView
 
 urlpatterns = [
     path('scientific-team/', scientific_team_list),
