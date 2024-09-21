@@ -1,12 +1,17 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from .utils import find_root_and_category
 
 from .models import ScientificTeam, Scientists, Expressions, News, Provensiya, Dictionary, Contact, Slider, Text
 from .sarializer import ScientificTeamSerializer, ScientistsSerializer, ExpressionsSerializer, NewsSerializer, \
-    ProvensiyaSerializer, DictionarySerializer, ContactSerializer, SliderSerializer, TextSerializer
-from .utils import search_texts
+    ProvensiyaSerializer, DictionarySerializer, ContactSerializer, SliderSerializer, TextSerializer, \
+    WordInputSerializer
+
+
+# from .utils import  LemmatizedSearchFilter
 
 
 @api_view(['GET'])
@@ -121,21 +126,26 @@ def slider_list(request):
         return Response(serializer.data)
 
 
-@api_view(['GET'])
-def text_list(request):
-    text = Text.objects.all()
-    serializer = TextSerializer(text, many=True)
-    return Response(serializer.data)
+class TextListView(ListAPIView):
+    queryset = Text.objects.all()
+    serializer_class = TextSerializer
+    # filter_backends = [LemmatizedSearchFilter]
 
 
-class SearchAPIView(APIView):
-    def get(self, request):
-        query = request.GET.get('q', '')
-        if not query:
-            return Response({'results': [], 'message': 'Qidiruv so\'zi kiritilmagan.'}, status=400)
+class WordRootAPIView(APIView):
+    def post(self, request):
+        serializer = WordInputSerializer(data=request.data)
+        if serializer.is_valid():
+            word = serializer.validated_data['word']
+            root_word, suffix, category = find_root_and_category(word)
 
-        results = search_texts(query)
-        if not results:
-            return Response({'results': [], 'message': 'Natijalar topilmadi.'}, status=200)
-
-        return Response({'results': results})
+            if root_word:
+                result_data = {
+                    'soz_ildizi': root_word,
+                    'qo\'shimcha': suffix if suffix else 'Qo\'shimcha yo\'q',
+                    'soz_turkumi': category.type if category else 'So\'z turkumi topilmadi'
+                }
+                return Response(result_data, status=status.HTTP_200_OK)
+            else:
+                return Response({'error': 'So‘zning ildizi topilmadi'}, status=status.HTTP_404_NOT_FOUND)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -1,11 +1,8 @@
 from ckeditor.fields import RichTextField
 from django.contrib import admin
-
 from .models import ScientificTeam, Scientists, Expressions, News, Provensiya, Dictionary, Sentences, Contact, Slider, \
-    Text
+    Text, Category, Addition
 from ckeditor.widgets import CKEditorWidget
-
-from .utils import search_texts
 
 admin.site.register(ScientificTeam)
 
@@ -31,15 +28,9 @@ class SentencesInline(admin.TabularInline):
 
 
 class TextAdmin(admin.ModelAdmin):
-    list_display = ('id', 'provensiya', 'text', 'lemmatized_text')  # Fields to display in the list view
-    search_fields = ['text', 'lemmatized_text']  # Fields to be searchable in the admin interface
+    list_display = ('id', 'provensiya', 'text')  # Ko'rinishda maydonlarni chiqarish
+    search_fields = ['text']  # Admin interfeysda qidiriladigan maydonlar
     list_filter = ('provensiya',)
-
-    def get_search_results(self, request, queryset, search_term):
-        # Qidiruv termiga lemmatizatsiya qo'shish
-        search_results = search_texts(search_term)
-        return search_results, False
-
 
 class ProvensiyaAdmin(admin.ModelAdmin):
     list_display = ('id', 'provensiya')
@@ -73,3 +64,7 @@ admin.site.register(Text, TextAdmin)
 admin.site.register(Contact, ContactAdmin)
 admin.site.register(Provensiya, ProvensiyaAdmin)
 admin.site.register(Dictionary, DictionaryAdmin)
+admin.site.register(Category)
+admin.site.register(Addition)
+
+

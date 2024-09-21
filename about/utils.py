@@ -1,28 +1,32 @@
+from .models import Addition
 
-from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
-from .models import Text, nlp
+uzbek_words = ['man', 'bola', 'ota', 'ona', 'uy', 'ish', 'kitob', 'gul', 'olma', ]  # O'zbek lug'atidagi so'zlar
 
 
-def search_texts(query):
-    # Lemmatizatsiya qilingan qidiruv so'zini yaratish
-    doc = nlp(query)
-    lemmatized_query = " ".join([token.lemma_ for token in doc if token.lemma_])
+# So'z ildizini topadigan funksiya
+def find_root_and_category(word):
+    root_word = None
+    max_length = 0
 
-    # Agar qidiruv so'zi bo'sh bo'lsa, hech qanday natija qaytarmang
-    if not lemmatized_query.strip():
-        return []
+    # So'zning eng uzun ildizini topish
+    for uzbek_word in uzbek_words:
+        if word.startswith(uzbek_word) and len(uzbek_word) > max_length:
+            root_word = uzbek_word
+            max_length = len(uzbek_word)
 
-    # Izlash vektorini yaratish
-    search_vector = SearchVector('lemmatized_text')
+    if not root_word:
+        return None, None, None  # Agar ildiz topilmasa, hech narsa qaytarmaydix
 
-    # Izlash so'rovini yaratish
-    search_query = SearchQuery(lemmatized_query)
+    # So'z ildizidan keyingi qism qo'shimcha bo'lishi mumkin
+    suffix = word[len(root_word):]
 
-    # Qidiruvni amalga oshirish
-    results = Text.objects.annotate(
-        rank=SearchRank(search_vector, search_query)
-    ).filter(
-        rank__gt=0.1
-    ).order_by('-rank')
+    # Qo'shimchani Addition modelidan qidirish
+    try:
+        # Faqat suffix qo'shimchalar ro'yxatida bo'lsa qo'shimcha deb qaraladi
+        addition = Addition.objects.get(adition=suffix)
+        category = addition.categ
+    except Addition.DoesNotExist:
+        # Agar suffix qo'shimcha bo'lmasa, hech qanday qo'shimcha qaytarmaydi
+        return root_word, None, None
 
-    return results
+    return root_word, suffix, category  # Ildiz, qo'shimcha va kategoriya qaytariladi

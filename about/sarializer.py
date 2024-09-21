@@ -10,7 +10,8 @@ from .models import ScientificTeam, Scientists, Expressions, News, Provensiya, D
 class ScientificTeamSerializer(serializers.ModelSerializer):
     class Meta:
         model = ScientificTeam
-        fields = ['id', 'fullname', 'workplace', 'position', 'academic_level', 'phone', 'email', 'image', 'admission_day']
+        fields = ['id', 'fullname', 'workplace', 'position', 'academic_level', 'phone', 'email', 'image',
+                  'admission_day']
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -45,6 +46,7 @@ class NewsSerializer(serializers.ModelSerializer):
             return request.build_absolute_uri(obj.image.url)
         return None
 
+
 class SentencesSerializer(serializers.ModelSerializer):
     sentence = serializers.SerializerMethodField()
 
@@ -63,6 +65,7 @@ class SentencesSerializer(serializers.ModelSerializer):
         cleaned_sentence = re.sub(r'\s+', ' ', cleaned_sentence).strip()
 
         return cleaned_sentence
+
 
 class ProvensiyaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -95,6 +98,7 @@ class DictionarySerializer(serializers.ModelSerializer):
 
         return cleaned_value
 
+
 class ContactSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contact
@@ -112,5 +116,14 @@ class TextSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Text
-        fields = ['id', 'text', 'provensiya', 'lemmatized_text']
+        fields = ['id', 'text', 'provensiya']
 
+
+class WordInputSerializer(serializers.Serializer):
+    word = serializers.CharField(max_length=200)
+
+
+class WordResultSerializer(serializers.Serializer):
+    soz_ildizi = serializers.CharField(max_length=200)
+    qoshimcha = serializers.CharField(max_length=200, required=False, allow_blank=True)  # Qo'shimcha maydon
+    soz_turkumi = serializers.CharField(max_length=200, required=False, allow_blank=True)

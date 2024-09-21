@@ -1,5 +1,4 @@
-import spacy
-from django.contrib.postgres.indexes import GinIndex
+
 from django.db import models
 from ckeditor.fields import RichTextField
 
@@ -88,22 +87,24 @@ class Slider(models.Model):
         return self.title
 
 
-nlp = spacy.load("en_core_web_sm")
 
 
 class Text(models.Model):
     provensiya = models.ForeignKey('Provensiya', on_delete=models.CASCADE)
     text = models.TextField(blank=True, null=True)
-    lemmatized_text = models.TextField(blank=True, null=True)
 
-    class Meta:
-        indexes = [
-            GinIndex(fields=['lemmatized_text'], name='lemmatized_text_idx'),
-        ]
 
-    def save(self, *args, **kwargs):
-        # Matnni lemmatizatsiya qilish
-        if self.text:
-            doc = nlp(self.text)
-            self.lemmatized_text = " ".join([token.lemma_ for token in doc])
-        super().save(*args, **kwargs)
+class Category(models.Model):
+    type = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.type
+
+
+class Addition(models.Model):
+    adition = models.CharField(max_length=200)
+    categ = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='additions')
+
+    def __str__(self):
+        return self.adition
+

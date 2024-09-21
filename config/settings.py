@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'ckeditor_uploader',
     'drf_yasg',
     'corsheaders',
+    'django_filters',
 
 ]
 
